@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  datagenerator:
+    build: ./datagenerator
+    environment:
+      KAFKA_BROKER_URL: broker:9092
+      DATA_TOPIC: queueing.data
+      DATA_PER_SECOND: 100
+
+  modelgenerator:
+    build: ./modelgenerator
+    environment:
+      KAFKA_BROKER_URL: broker:9092
+      MODEL_TOPIC: queueing.model
+      MODEL_PER_SECOND: 1
+
+  predictor:
+    build: ./predictor
+    environment:
+      KAFKA_BROKER_URL: broker:9092
+      MODEL_TOPIC: queueing.model
+      DATA_TOPIC: queueing.data
+      PREDICTION_TOPIC: streaming.prediction
+      LOG_FILE : ./predictor.log
+
+networks:
+  default:
+    external:
+      name: kafka-network
